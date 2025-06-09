@@ -218,6 +218,40 @@ app.post('/api/anti-detection/rotate', async (req, res) => {
     }
 });
 
+// Health check endpoint for monitoring and Docker
+app.get('/health', (req, res) => {
+    const health = {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        uptime: Math.floor(process.uptime()),
+        memory: {
+            used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+            total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+            rss: Math.round(process.memoryUsage().rss / 1024 / 1024)
+        },
+        bots: {
+            active: activeBots.size,
+            total: activeBots.size
+        },
+        antiDetection: antiDetection ? {
+            enabled: true,
+            proxyCount: antiDetection.proxyManager ? antiDetection.proxyManager.getActiveCount() : 0
+        } : {
+            enabled: false
+        }
+    };
+    
+    res.json(health);
+});
+
+// Simple status endpoint
+app.get('/ping', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString() 
+    });
+});
+
 // Start server
 app.listen(port, () => {
     console.log(chalk.green(`🌐 Video Bot Server running on http://localhost:${port}`));

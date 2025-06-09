@@ -57,6 +57,36 @@ cp .env.example .env
 npm start
 ```
 
+### 🚀 Quick Setup Scripts
+
+For easier setup, use our automated setup scripts:
+
+#### Windows
+```cmd
+# Run the Windows setup script
+setup.bat
+```
+
+#### Linux/macOS
+```bash
+# Make executable and run
+chmod +x setup.sh
+./setup.sh
+```
+
+#### Cross-Platform (Node.js)
+```bash
+# Universal setup script
+node setup.js
+```
+
+These scripts will:
+- ✅ Check prerequisites (Node.js 18+, Git)
+- 📁 Create necessary directories
+- 📄 Set up environment file
+- 📦 Install dependencies
+- 📋 Show next steps
+
 ## ⚙️ Configuration
 
 ### Environment Variables
@@ -295,6 +325,9 @@ CMD ["npm", "start"]
 ├── server.js             # Web server
 ├── admin-panel.js        # Admin interface
 ├── batch.js              # Batch processing
+├── setup.js              # Cross-platform setup script
+├── setup.bat             # Windows setup script
+├── setup.sh              # Linux/macOS setup script
 ├── data/
 │   └── proxies.json      # Proxy database
 ├── logs/
