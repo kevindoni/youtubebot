@@ -43,8 +43,13 @@ npm install
 
 3. **Configure environment:**
 ```bash
+# For Windows/Linux/Mac
 cp .env.example .env
-# Edit .env with your settings
+
+# Edit .env with your favorite editor:
+# Windows: notepad .env
+# Linux/Mac: nano .env
+# Or use VS Code: code .env
 ```
 
 4. **Run the bot:**
@@ -202,6 +207,8 @@ Access the web panel at `http://localhost:3000` for:
 ## 🚀 Deployment
 
 ### VPS Deployment
+
+#### Linux (Ubuntu/Debian)
 ```bash
 # Install Node.js
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
@@ -219,8 +226,51 @@ nano .env
 # Run with PM2
 npm install -g pm2
 pm2 start index.js --name "video-bot"
-pm2 save
 pm2 startup
+pm2 save
+```
+
+#### Linux (CentOS/RHEL/Amazon Linux)
+```bash
+# Install Node.js
+curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+sudo yum install -y nodejs
+
+# Clone and setup
+git clone https://github.com/kevindoni/youtubebot.git
+cd youtubebot
+npm install
+
+# Configure environment
+cp .env.example .env
+vi .env
+
+# Run with PM2
+npm install -g pm2
+pm2 start index.js --name "video-bot"
+pm2 startup
+pm2 save
+```
+
+#### Windows Server
+```powershell
+# Install Node.js (download from nodejs.org or use winget)
+winget install OpenJS.NodeJS
+
+# Clone and setup
+git clone https://github.com/kevindoni/youtubebot.git
+cd youtubebot
+npm install
+
+# Configure environment
+copy .env.example .env
+notepad .env
+
+# Run with PM2
+npm install -g pm2
+pm2 start index.js --name "video-bot"
+pm2 startup
+pm2 save
 ```
 
 ### Docker Deployment
