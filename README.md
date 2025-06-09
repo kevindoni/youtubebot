@@ -32,8 +32,8 @@ A sophisticated video engagement bot with **advanced anti-detection features**, 
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/advanced-video-bot.git
-cd advanced-video-bot
+git clone https://github.com/kevindoni/youtubebot.git
+cd youtubebot
 ```
 
 2. **Install dependencies:**
@@ -208,8 +208,8 @@ curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Clone and setup
-git clone https://github.com/yourusername/advanced-video-bot.git
-cd advanced-video-bot
+git clone https://github.com/kevindoni/youtubebot.git
+cd youtubebot
 npm install
 
 # Configure environment
@@ -274,9 +274,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🤝 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/advanced-video-bot/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/advanced-video-bot/discussions)
-- **Documentation**: [Wiki](https://github.com/yourusername/advanced-video-bot/wiki)
+- **Issues**: [GitHub Issues](https://github.com/kevindoni/youtubebot/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/kevindoni/youtubebot/discussions)
+- **Documentation**: [Wiki](https://github.com/kevindoni/youtubebot/wiki)
 
 ## 🌟 Acknowledgments
 
