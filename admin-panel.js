@@ -13,7 +13,7 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const PORT = process.env.ADMIN_PORT || 5050;
+const PORT = process.env.ADMIN_PORT || 5051;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
 // Middleware
@@ -265,13 +265,329 @@ app.get('/', (req, res) => {
             gap: 20px;
         }
         
+        /* Multi-View Controls */
+        .view-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .view-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .view-btn {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .view-btn:hover {
+            background: #e9ecef;
+            border-color: #6c757d;
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input, .filter-select {
+            padding: 8px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-input {
+            min-width: 200px;
+        }
+
+        .filter-select {
+            background: white;
+        }
+
+        /* Grid View */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .video-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .video-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .video-thumbnail {
+            width: 60px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .video-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-processing { background: #d1ecf1; color: #0c5460; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+
+        .video-url {
+            font-weight: bold;
+            color: #2c3e50;
+            word-break: break-all;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #6c757d;
+            flex-wrap: wrap;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .action-btn-edit {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .action-btn-remove {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        /* List View */
+        .video-list {
+            display: block;
+        }
+
+        .video-list-item {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .video-list-item:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transform: translateX(5px);
+        }
+
+        .video-list-content {
+            flex: 1;
+        }
+
+        .video-list-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Table View */
+        .video-table {
+            width: 100%;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .video-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .video-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        .video-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .video-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Compact View */
+        .video-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .video-compact-item {
+            background: #fff;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .video-compact-item:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-compact-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .video-compact-url {
+            font-weight: 600;
+            font-size: 13px;
+            color: #2c3e50;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .video-compact-meta {
+            font-size: 11px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+
+        .video-compact-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .compact-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-            .grid-2 {
+            .video-grid {
                 grid-template-columns: 1fr;
             }
             
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .view-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .view-selector {
+                justify-content: center;
+            }
+            
+            .search-filter {
+                justify-content: center;
+            }
+            
+            .video-list-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .video-table {
+                overflow-x: auto;
+            }
+            
+            .search-input {
+                min-width: auto;
+                width: 100%;
             }
         }
     </style>
@@ -381,12 +697,96 @@ app.get('/', (req, res) => {
                         <p>Memory: <span id="memory">--</span></p>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Video Queue -->
+            </div>            <!-- Video Queue -->
             <div class="video-queue">
-                <h3>Video Queue (<span id="queueCount">0</span>)</h3>
-                <div id="videoList"></div>
+                <!-- Multi-View Status Summary -->
+                <div class="multi-view-summary" style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; color: white;">
+                    <h4 style="margin: 0 0 10px 0; color: white;">Multi-View System Status</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="status-card">
+                            <div style="font-size: 24px; font-weight: bold;" id="totalVideosCount">0</div>
+                            <div style="font-size: 12px; opacity: 0.9;">Total Videos</div>
+                        </div>
+                        <div class="status-card">
+                            <div style="font-size: 24px; font-weight: bold;" id="currentViewDisplay">Grid</div>
+                            <div style="font-size: 12px; opacity: 0.9;">Current View</div>
+                        </div>
+                        <div class="status-card">
+                            <div style="font-size: 24px; font-weight: bold;" id="filteredCount">0</div>
+                            <div style="font-size: 12px; opacity: 0.9;">Filtered Results</div>
+                        </div>
+                        <div class="status-card">
+                            <div style="font-size: 24px; font-weight: bold;" id="selectedCount">0</div>
+                            <div style="font-size: 12px; opacity: 0.9;">Selected Items</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="view-controls">
+                    <div>
+                        <h3>Video Queue (<span id="queueCount">0</span>)</h3>
+                    </div>
+                    <div class="view-selector">
+                        <span style="font-weight: 600; margin-right: 10px;">View:</span>
+                        <button class="view-btn active" data-view="grid" onclick="changeView('grid')" data-tooltip="Grid View (Ctrl+1)">
+                            <span>📊</span> Grid
+                        </button>
+                        <button class="view-btn" data-view="list" onclick="changeView('list')" data-tooltip="List View (Ctrl+2)">
+                            <span>📋</span> List
+                        </button>
+                        <button class="view-btn" data-view="table" onclick="changeView('table')" data-tooltip="Table View (Ctrl+3)">
+                            <span>📄</span> Table
+                        </button>
+                        <button class="view-btn" data-view="compact" onclick="changeView('compact')" data-tooltip="Compact View (Ctrl+4)">
+                            <span>📦</span> Compact                        </button>
+                    </div>
+                    <div class="search-filter-container">
+                        <input type="text" class="search-input" id="videoSearch" placeholder="Search videos... (Ctrl+F)" onkeyup="filterVideos()" data-tooltip="Search by URL or comment">
+                        <select class="filter-select" id="statusFilter" onchange="filterVideos()" data-tooltip="Filter by status">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="completed">Completed</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                        <select class="filter-select" id="priorityFilter" onchange="advancedSearch()" data-tooltip="Filter by priority">
+                            <option value="">All Priorities</option>
+                            <option value="high">High Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="low">Low Priority</option>
+                        </select>
+                        <button class="clear-filters-btn" onclick="clearAllFilters()" data-tooltip="Clear all filters (Esc)">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Video List Container -->
+                <div id="videoList" class="video-list-container"></div>
+                
+                <div class="queue-actions">
+                    <button class="queue-action-btn" onclick="exportQueue()" data-tooltip="Export all videos as JSON (Ctrl+S)">
+                        <span>💾</span> Export
+                    </button>
+                    <button class="queue-action-btn" onclick="importQueue()" data-tooltip="Import videos from JSON file (Ctrl+O)">
+                        <span>📁</span> Import
+                    </button>
+                    <button class="queue-action-btn" onclick="duplicateSelected()" data-tooltip="Duplicate selected videos">
+                        <span>📋</span> Duplicate
+                    </button>
+                    <button class="queue-action-btn" onclick="reverseQueue()" data-tooltip="Reverse queue order">
+                        <span>🔄</span> Reverse
+                    </button>
+                    <button class="queue-action-btn" onclick="sortByPriority()" data-tooltip="Sort by priority">
+                        <span>⚡</span> Sort
+                    </button>
+                </div>
+                
+                <!-- Keyboard Shortcuts Help -->
+                <div class="shortcuts-help" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 12px; color: #6c757d;">
+                    <strong>Keyboard Shortcuts:</strong> 
+                    Ctrl+1-4 (Views) • Ctrl+A (Select All) • Ctrl+S (Export) • Ctrl+O (Import) • Ctrl+F (Search) • Del (Delete) • Esc (Clear)
+                </div>
             </div>
             
             <!-- Logs -->
@@ -397,7 +797,11 @@ app.get('/', (req, res) => {
         </div>
     </div>
     
+    <!-- Load Multi-View Scripts -->
+    <script src="/multi-view.js"></script>
+    <script src="/multi-view-enhanced.js"></script>
     <script>
+        // Enhanced admin panel functionality
         let token = localStorage.getItem('adminToken');
         let ws = null;
         
@@ -482,26 +886,13 @@ app.get('/', (req, res) => {
             document.getElementById('totalComments').textContent = stats.totalComments;
             document.getElementById('activeJobs').textContent = stats.activeJobs;
         }
-        
-        function updateQueue(queue) {
-            const container = document.getElementById('videoList');
+          function updateQueue(queue) {
+            // Update queue count
             const count = document.getElementById('queueCount');
-            
             count.textContent = queue.length;
-            container.innerHTML = '';
             
-            queue.forEach((video, index) => {
-                const item = document.createElement('div');
-                item.className = 'video-item';
-                item.innerHTML = \`
-                    <div>
-                        <strong>\${video.url}</strong><br>
-                        <small>Watch: \${video.watchTime}s | Like: \${video.shouldLike ? 'Yes' : 'No'} | Comment: \${video.shouldComment ? 'Yes' : 'No'}</small>
-                    </div>
-                    <button class="btn btn-danger" onclick="removeVideo(\${index})">Remove</button>
-                \`;
-                container.appendChild(item);
-            });
+            // Use multi-view functionality
+            updateQueueWithView(queue);
         }
         
         function updateSystemInfo(info) {
