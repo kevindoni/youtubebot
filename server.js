@@ -232,12 +232,12 @@ app.get('/health', (req, res) => {
         bots: {
             active: activeBots.size,
             total: activeBots.size
-        },
-        antiDetection: antiDetection ? {
+        },        antiDetection: antiDetection ? {
             enabled: true,
-            proxyCount: antiDetection.proxyManager ? antiDetection.proxyManager.getActiveCount() : 0
+            proxyStats: antiDetection.proxyManager ? antiDetection.proxyManager.getStats() : { total: 0, working: 0 }
         } : {
-            enabled: false
+            enabled: false,
+            proxyStats: { total: 0, working: 0 }
         }
     };
     
