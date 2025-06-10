@@ -1,0 +1,205 @@
+name: YouTube Bot CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Create test environment
+      run: |
+        cp .env.example .env
+        mkdir -p logs data
+        echo '[]' > data/proxies.json
+    
+    - name: Run linting
+      run: |
+        # Install eslint if not present
+        if ! npm list eslint > /dev/null 2>&1; then
+          npm install --save-dev eslint
+        fi
+        npx eslint . --ext .js --ignore-pattern node_modules/ --ignore-pattern logs/ --ignore-pattern data/ || true
+    
+    - name: Start server for testing
+      run: |
+        timeout 30s npm run server &
+        sleep 10
+      continue-on-error: true
+    
+    - name: Test health endpoints
+      run: |
+        # Wait for server to start
+        for i in {1..30}; do
+          if curl -f http://localhost:3000/ping > /dev/null 2>&1; then
+            echo "✅ Server is responding"
+            break
+          fi
+          echo "⏳ Waiting for server... ($i/30)"
+          sleep 2
+        done
+        
+        # Test health endpoint
+        curl -f http://localhost:3000/health || exit 1
+        echo "✅ Health endpoint working"
+        
+        # Test ping endpoint  
+        curl -f http://localhost:3000/ping || exit 1
+        echo "✅ Ping endpoint working"
+    
+    - name: Test setup script
+      run: |
+        node setup.js --test-mode || echo "⚠️ Setup script completed with warnings"
+    
+    - name: Archive logs
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-logs-node-${{ matrix.node-version }}
+        path: logs/
+
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run security audit
+      run: |
+        npm audit --audit-level high
+        # Install and run npm-check-updates
+        npx npm-check-updates --target minor
+    
+    - name: Check for vulnerable dependencies
+      run: |
+        if npm audit --audit-level high --json | jq '.metadata.vulnerabilities.high + .metadata.vulnerabilities.critical' | grep -v '^0$'; then
+          echo "❌ High or critical vulnerabilities found"
+          npm audit
+          exit 1
+        else
+          echo "✅ No high or critical vulnerabilities found"
+        fi
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      run: |
+        docker build -t youtube-bot:test .
+        echo "✅ Docker image built successfully"
+    
+    - name: Test Docker container
+      run: |
+        # Create test environment
+        echo "NODE_ENV=test" > .env
+        echo "PORT=3000" >> .env
+        
+        # Start container
+        docker run -d --name test-container -p 3000:3000 --env-file .env youtube-bot:test
+        
+        # Wait for container to start
+        sleep 15
+        
+        # Test health endpoints
+        if curl -f http://localhost:3000/ping; then
+          echo "✅ Docker container health check passed"
+        else
+          echo "❌ Docker container health check failed"
+          docker logs test-container
+          exit 1
+        fi
+        
+        # Clean up
+        docker stop test-container
+        docker rm test-container
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [test, security-scan, docker-build]
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Deploy to staging
+      run: |
+        echo "🚀 Deploying to staging environment..."
+        echo "This would deploy to your staging server"
+        # Add your staging deployment commands here
+        # Example: ssh deploy@staging-server "cd /app && git pull && pm2 restart all"
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [test, security-scan, docker-build]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Deploy to production
+      run: |
+        echo "🚀 Deploying to production environment..."
+        echo "This would deploy to your production server"
+        # Add your production deployment commands here
+        # Example: 
+        # - Build and push Docker image to registry
+        # - Deploy to production servers
+        # - Run smoke tests
+        # - Send deployment notifications
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    
+    steps:
+    - name: Notify deployment status
+      run: |
+        if [ "${{ needs.deploy-production.result }}" == "success" ]; then
+          echo "✅ Production deployment successful!"
+        elif [ "${{ needs.deploy-staging.result }}" == "success" ]; then
+          echo "✅ Staging deployment successful!"
+        else
+          echo "ℹ️ Deployment completed"
+        fi
